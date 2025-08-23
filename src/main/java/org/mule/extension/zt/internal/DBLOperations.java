@@ -11,6 +11,7 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.connectivity.ConnectionProviders;
 import org.mule.runtime.extension.api.annotation.values.OfValues;
 
+
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
@@ -22,10 +23,14 @@ import org.mule.runtime.api.meta.ExpressionSupport;
 import com.ztensor.datacrypt.*;
 import com.ztensor.util.json.*;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import org.mule.runtime.http.api.HttpService;
+import org.mule.runtime.http.api.client.HttpClient;
+import org.mule.runtime.http.api.client.HttpClientConfiguration;
+import org.mule.runtime.http.api.domain.message.request.HttpRequest;
+import org.mule.runtime.http.api.domain.message.response.HttpResponse;
+import org.mule.runtime.http.api.domain.entity.ByteArrayHttpEntity;
+import org.mule.runtime.http.api.domain.message.request.HttpRequestBuilder;
+import javax.inject.Inject;
 /**
  * This class is a container for operations, every public method in this class will be taken as an extension operation.
  */
@@ -65,10 +70,11 @@ public class DBLOperations {
     }
     return response;
   }
-  
+  @Inject private HttpService httpService;
+
   @MediaType(value = APPLICATION_JSON, strict = false)
   @Alias("EncryptJsonUsingNLP")
-  public String encryptJsonUsingNLP(@Config DBLConfiguration configuration,
+  public String encryptJsonUsingNLP(@Connection DBLConnection connection, @Config DBLConfiguration configuration,
 		  @Content @DisplayName("Sensitive JSON") @Expression(ExpressionSupport.SUPPORTED) String sensitiveJson,
 		  @DisplayName("Tweak") @Expression(ExpressionSupport.SUPPORTED) String tweak, 
   		  @DisplayName("OverRide Token") 
@@ -83,7 +89,6 @@ public class DBLOperations {
 	String response = "{ 'Success' : 'false', 'error' : 'Undefined' }";
 	System.out.println(versionTag + " DataBlind EncryptJsonUsingNLP" );    	
     try {    
-    	
        
         String jsonPayload = String.format(
         	    "{\n" +
@@ -94,16 +99,25 @@ public class DBLOperations {
         	    "  \"overRidePassPhrase\": \"%s\"\n" +
         	    "}", configuration.getEncryptionKey(), tweak, sensitiveJson, overRideToken, passPhrase);
     	
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(configuration.getApiUri()))
-            .header("Content-Type", "application/json")
-            .header("x-api-key", configuration.getApiKey()) // If using API key
-            .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
+        // Create Mule HTTP client
+/*          HttpClientConfiguration clientConfig = new HttpClientConfiguration.Builder()
+            .setName("datablind-http-client")
+            .build();
+        HttpClient httpClient = httpService.getClientFactory().create(clientConfig);
+		httpClient.start();
+*/        
+        // Build HTTP request using the correct Mule API
+        HttpRequest request = HttpRequest.builder()
+            .method("POST")
+            .uri(configuration.getApiUri())
+            .addHeader("Content-Type", "application/json")
+            .addHeader("x-api-key", configuration.getApiKey())
+            .entity(new ByteArrayHttpEntity(jsonPayload.getBytes()))
             .build();
 
-        HttpResponse<String> httpResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
-        response = httpResponse.body();
+        // Execute request
+        HttpResponse httpResponse = connection.getHttpClient().send(request);
+        response = new String(httpResponse.getEntity().getContent().readAllBytes());
     }
     catch (Exception e) {
     	System.out.println("Excception, encryptJsonUsingNLP failed " + e);
