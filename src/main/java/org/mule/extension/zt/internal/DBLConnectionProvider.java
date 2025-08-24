@@ -25,9 +25,6 @@ import org.mule.runtime.http.api.domain.entity.ByteArrayHttpEntity;
 import org.mule.runtime.http.api.domain.message.request.HttpRequestBuilder;
 
 
-
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,8 +55,7 @@ public class DBLConnectionProvider implements PoolingConnectionProvider<DBLConne
         HttpClientConfiguration.Builder builder = new HttpClientConfiguration.Builder();
         builder.setName("datablind-http-client");
         httpClient = httpService.getClientFactory().create(builder.build());
-    
-    return new DBLConnection("Test", httpClient);
+        return new DBLConnection("Test", httpClient);
   }
 
   @Override
@@ -77,13 +73,20 @@ public class DBLConnectionProvider implements PoolingConnectionProvider<DBLConne
   }
 
   @Override
-  public void start() throws MuleException {
-    httpClient.start();
+  public void start() {
+    try {
+      httpClient.start();
+    } catch (Exception e) {
+      LOGGER.error("Error while starting httpClient: " + e.getMessage(), e);
+    }
   }
 
   @Override
-  public void stop() throws MuleException {
-    httpClient.stop();
+  public void stop() {
+    try {
+      httpClient.stop();
+    } catch (Exception e) {
+      LOGGER.error("Error while stopping httpClient: " + e.getMessage(), e);
+    }
   }
-
 }

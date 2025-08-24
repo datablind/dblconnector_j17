@@ -31,12 +31,16 @@ import org.mule.runtime.http.api.domain.message.response.HttpResponse;
 import org.mule.runtime.http.api.domain.entity.ByteArrayHttpEntity;
 import org.mule.runtime.http.api.domain.message.request.HttpRequestBuilder;
 import javax.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * This class is a container for operations, every public method in this class will be taken as an extension operation.
  */
 public class DBLOperations {
 
-	private static String versionTag = "v3.0.0";
+  private final Logger LOGGER = LoggerFactory.getLogger(DBLOperations.class);
+
+  private static String versionTag = "v3.0.0";
 	
   @MediaType(value = APPLICATION_JSON, strict = false)
   @Alias("EncryptJson")
@@ -54,7 +58,7 @@ public class DBLOperations {
   		  @Optional(defaultValue = "NOPASSPHRASE")
   		  @Placement(order = 2, tab="Advanced") String passPhrase) {
     String response = "{ 'Success' : 'false', 'error' : 'Undefined' }";
-	System.out.println(versionTag + " DataBlind EncryptJson" );    	
+	LOGGER.info(versionTag + " DataBlind EncryptJson" );    	
 
     try {    
         KeyContext kc = new KeyContext("CipherWorks", "Admin", "1.0", configuration.getEncryptionKey().getBytes());
@@ -62,15 +66,14 @@ public class DBLOperations {
     	response = jsonDataCrypt.transform( "Encrypt", tweak, sensitiveJson, sensitiveFields, overRideToken, passPhrase);
     }
     catch (Exception e) {
-    	System.out.println("Excception, encryptJson failed " + e);
+    	LOGGER.error("Excception, encryptJson failed " + e);
         //response = "{ 'Success' : 'false', 'error' : " + e + "}";
-    	e.printStackTrace();
+    	LOGGER.error(e.getStackTrace().toString());
     	throw new ModuleException("Operation encryptJson failed due to " + e , DBLErrorProvider.DATACRYPT_ERROR);
 
     }
     return response;
   }
-  @Inject private HttpService httpService;
 
   @MediaType(value = APPLICATION_JSON, strict = false)
   @Alias("EncryptJsonUsingNLP")
@@ -87,7 +90,7 @@ public class DBLOperations {
   		  @Optional(defaultValue = "NOPASSPHRASE")
   		  @Placement(order = 2, tab="Advanced") String passPhrase) {
 	String response = "{ 'Success' : 'false', 'error' : 'Undefined' }";
-	System.out.println(versionTag + " DataBlind EncryptJsonUsingNLP" );    	
+	LOGGER.info(versionTag + " DataBlind EncryptJsonUsingNLP" );    	
     try {    
        
         String jsonPayload = String.format(
@@ -120,9 +123,8 @@ public class DBLOperations {
         response = new String(httpResponse.getEntity().getContent().readAllBytes());
     }
     catch (Exception e) {
-    	System.out.println("Excception, encryptJsonUsingNLP failed " + e);
-        //response = "{ 'Success' : 'false', 'error' : " + e + "}";
-    	e.printStackTrace();
+    	LOGGER.error("Excception, encryptJsonUsingNLP failed " + e);
+    	LOGGER.error(e.getStackTrace().toString());
     	throw new ModuleException("Operation encryptJsonUsingNLP failed due to " + e , DBLErrorProvider.DATACRYPT_ERROR);
     }
     return response;
@@ -144,16 +146,15 @@ public class DBLOperations {
   		  @Optional(defaultValue = "NOPASSPHRASE")
   		  @Placement(order = 2, tab="Advanced") String passPhrase) {
 	String response = "{ 'Success' : 'false', 'error' : 'Undefined' }";
-	System.out.println(versionTag + " DataBlind ReduceJson" );    	
+	LOGGER.info(versionTag + " DataBlind ReduceJson" );    	
     try {    
         KeyContext kc = new KeyContext("CipherWorks", "Admin", "1.0", configuration.getEncryptionKey().getBytes());
         JsonDataCrypt jsonDataCrypt = new JsonDataCrypt(kc);
     	response = jsonDataCrypt.reduceJson( operation, sensitiveJson, sensitiveFields, overRideToken, passPhrase);
     }
     catch (Exception e) {
-    	System.out.println("Excception, filterJson failed " + e);
-        //response = "{ 'Success' : 'false', 'error' : " + e + "}";
-    	e.printStackTrace();
+    	LOGGER.error("Excception, filterJson failed " + e);
+    	LOGGER.error(e.getStackTrace().toString());
     	throw new ModuleException("Operation filterJson failed due to " + e , DBLErrorProvider.DATACRYPT_ERROR);
     }
     return response;
@@ -175,16 +176,15 @@ public class DBLOperations {
 		  @Optional(defaultValue = "NOPASSPHRASE")
 		  @Placement(order = 2, tab="Advanced") String passPhrase) {
 	String response = "{ 'Success' : 'false', 'error' : 'Undefined' }";
-	System.out.println(versionTag + " DataBlind DecryptJson" );    	
+	LOGGER.info(versionTag + " DataBlind DecryptJson" );    	
     try {  
         KeyContext kc = new KeyContext("CipherWorks", "Admin", "1.0", configuration.getEncryptionKey().getBytes());
     	JsonDataCrypt jsonDataCrypt = new JsonDataCrypt(kc);
     	response = jsonDataCrypt.transform( "Decrypt", tweak, encryptedJson, sensitiveFields, overRideToken, passPhrase);
     }
     catch (Exception e) {
-    	System.out.println("Excception, decryptJson failed " + e);
-        //response = "{ 'Success' : 'false', 'error' : " + e + "}";
-    	e.printStackTrace();
+    	LOGGER.error("Excception, decryptJson failed " + e);
+    	LOGGER.error(e.getStackTrace().toString());
     	throw new ModuleException("Operation decryptJson failed due to " + e , DBLErrorProvider.DATACRYPT_ERROR);
     }
     return response;
@@ -195,16 +195,15 @@ public class DBLOperations {
 		  @DisplayName("Passphrase") @Expression(ExpressionSupport.SUPPORTED) String passPhrase,
 		  @DisplayName("Expiration Seconds") @Expression(ExpressionSupport.SUPPORTED) Integer expirationSecs) {
    String response = "{ 'Success' : 'false', 'error' : 'Undefined' }";
-   System.out.println(versionTag + " DataBlind OverrideToken" );    	
+   LOGGER.info(versionTag + " DataBlind OverrideToken" );    	
    try {    
        KeyContext kc = new KeyContext("CipherWorks", "Admin", "1.0", configuration.getEncryptionKey().getBytes());
        HmacToken HmacToken = new HmacToken();
    	   response = HmacToken.generateToken( kc, passPhrase, expirationSecs.intValue());
    }
    catch (Exception e) {
-	System.out.println("Excception, overrideToken failed " + e);
-    //response = "{ 'Success' : 'false', 'error' : " + e + "}";
-   	e.printStackTrace();
+	LOGGER.error("Excception, overrideToken failed " + e);
+   	LOGGER.error(e.getStackTrace().toString());
 	throw new ModuleException("Operation overrideToken failed due to " + e , DBLErrorProvider.DATACRYPT_ERROR);
    }
    return response;
@@ -216,16 +215,15 @@ public class DBLOperations {
 		  @DisplayName("Passphrase") @Expression(ExpressionSupport.SUPPORTED) String passPhrase,
 		  @DisplayName("Expiration Seconds") @Expression(ExpressionSupport.SUPPORTED) Integer expirationSecs) {
    String response = "{ 'Success' : 'false', 'error' : 'Undefined' }";
-   System.out.println(versionTag + " DataBlind OverrideTokenWithNewKey" );    	
+   LOGGER.info(versionTag + " DataBlind OverrideTokenWithNewKey" );    	
    try {    
        KeyContext kc = new KeyContext("CipherWorks", "Admin", "1.0", key.getBytes());
        HmacToken HmacToken = new HmacToken();
    	   response = HmacToken.generateToken( kc, passPhrase, expirationSecs.intValue());
    }
    catch (Exception e) {
-	System.out.println("Excception, overrideTokenWithNewKey failed " + e);
-    //response = "{ 'Success' : 'false', 'error' : " + e + "}";
-   	e.printStackTrace();
+	LOGGER.error("Excception, overrideTokenWithNewKey failed " + e);
+   	LOGGER.error(e.getStackTrace().toString());
 	throw new ModuleException("Operation overrideTokenWithNewKey failed due to " + e , DBLErrorProvider.DATACRYPT_ERROR);
    }
    return response;
