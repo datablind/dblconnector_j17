@@ -31,10 +31,9 @@ jobs:
         distribution: 'temurin'
         
     - name: Setup Maven
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'maven'
+      run: |
+        echo "Using built-in Maven from GitHub Actions runner"
+        mvn --version
         
     - name: Deploy to Dev Environment
       if: github.ref == 'refs/heads/dev' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'dev')
