@@ -1,0 +1,66 @@
+name: Deploy to MuleSoft Exchange
+
+on:
+  push:
+    branches: [ main, dev ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+        - dev
+        - main
+
+env:
+  MAVEN_VERSION: '3.9.6'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Set up Maven
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'maven'
+        maven-version: ${{ env.MAVEN_VERSION }}
+        
+    - name: Deploy to Dev Environment
+      if: github.ref == 'refs/heads/dev' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'dev')
+      run: |
+        mvn clean package deploy -X -s ./settings.xml \
+          -Danypoint_username=${{ secrets.ANYPOINT_USERNAME }} \
+          -Danypoint_password=${{ secrets.ANYPOINT_PASSWORD }} \
+          -Ddblrepo_username=${{ secrets.DBLREPO_USERNAME }} \
+          -Ddblrepo_password=${{ secrets.DBLREPO_PASSWORD }} 
+      env:
+        anypoint_username: ${{ secrets.ANYPOINT_USERNAME }}
+        anypoint_password: ${{ secrets.ANYPOINT_PASSWORD }}
+        dblrepo_username: ${{ secrets.DBLREPO_USERNAME }}
+        dblrepo_password: ${{ secrets.DBLREPO_PASSWORD }}
+        
+    - name: Deploy to Main Environment
+      if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'main')
+      run: |
+        mvn clean package deploy -X -s ./settings.xml \
+          -Danypoint_username=${{ secrets.ANYPOINT_USERNAME }} \
+          -Danypoint_password=${{ secrets.ANYPOINT_PASSWORD }} \
+          -Ddblrepo_username=${{ secrets.DBLREPO_USERNAME }} \
+          -Ddblrepo_password=${{ secrets.DBLREPO_PASSWORD }} 
+      env:
+        anypoint_username: ${{ secrets.ANYPOINT_USERNAME }}
+        anypoint_password: ${{ secrets.ANYPOINT_PASSWORD }}
+        dblrepo_username: ${{ secrets.DBLREPO_USERNAME }}
+        dblrepo_password: ${{ secrets.DBLREPO_PASSWORD }}
