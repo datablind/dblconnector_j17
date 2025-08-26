@@ -31,9 +31,10 @@ jobs:
         distribution: 'temurin'
         
     - name: Setup Maven
-      uses: stCarolas/setup-maven@v8
+      uses: stCarolas/setup-maven@v3
       with:
         maven-version: '3.9.6'
+        java-version: '17'
         
     - name: Deploy to Dev Environment
       if: github.ref == 'refs/heads/dev' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'dev')
