@@ -56,7 +56,7 @@ jobs:
         echo "Testing GitHub package registry access..."
         echo "DBLREPO_USERNAME: $DBLREPO_USERNAME"
         echo "DBLREPO_PASSWORD length: ${#DBLREPO_PASSWORD}"
-        echo "Starting Maven deployment..."
+        echo "Starting Maven deployment...."
         mvn clean package deploy -s ./settings_github_workflow.xml -DskipTests -Dmaven.javadoc.skip=true \
           -Danypoint_username=$ANYPOINT_USERNAME \
           -Danypoint_password=$ANYPOINT_PASSWORD \
