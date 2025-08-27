@@ -39,28 +39,28 @@ jobs:
     - name: Deploy to Dev Environment
       if: github.ref == 'refs/heads/dev' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'dev')
       env:
-        ANYPOINT_USERNAME: ${{ secrets.ANYPOINT_USERNAME }}
-        ANYPOINT_PASSWORD: ${{ secrets.ANYPOINT_PASSWORD }}
-        DBLREPO_USERNAME: ${{ secrets.DBLREPO_USERNAME }}
-        DBLREPO_PASSWORD: ${{ secrets.DBLREPO_PASSWORD }}
+        ANYPOINT_USERNAME: ${{ vars.ANYPOINT_USERNAME }}
+        ANYPOINT_PASSWORD: ${{ vars.ANYPOINT_PASSWORD }}
+        DBLREPO_USERNAME: ${{ vars.DBLREPO_USERNAME }}
+        DBLREPO_PASSWORD: ${{ vars.DBLREPO_PASSWORD }}
       run: |
         echo "Checking secrets availability:"
         echo "ANYPOINT_USERNAME length: ${#ANYPOINT_USERNAME}"
         echo "DBLREPO_USERNAME length: ${#DBLREPO_USERNAME}"
         echo "ANYPOINT_PASSWORD length: ${#ANYPOINT_PASSWORD}"
         echo "DBLREPO_PASSWORD length: ${#DBLREPO_PASSWORD}"
-        echo "ANYPOINT_USERNAME: '${{ secrets.ANYPOINT_USERNAME }}'"
-        echo "DBLREPO_USERNAME: '${{ secrets.DBLREPO_USERNAME }}'"
-        echo "*** means secrets are working and masked for security ***"
+        echo "ANYPOINT_USERNAME: '$ANYPOINT_USERNAME'"
+        echo "DBLREPO_USERNAME: '$DBLREPO_USERNAME'"
+        echo "Repository variables are loaded and ready"
         echo "Testing GitHub package registry access..."
         echo "DBLREPO_USERNAME: $DBLREPO_USERNAME"
         echo "DBLREPO_PASSWORD length: ${#DBLREPO_PASSWORD}"
         echo "Starting Maven deployment..."
         mvn clean package deploy -s ./settings.xml \
-          -Danypoint_username=${{ secrets.ANYPOINT_USERNAME }} \
-          -Danypoint_password=${{ secrets.ANYPOINT_PASSWORD }} \
-          -Ddblrepo_username=${{ secrets.DBLREPO_USERNAME }} \
-          -Ddblrepo_password=${{ secrets.DBLREPO_PASSWORD }} \
+          -Danypoint_username=${ANYPOINT_USERNAME} \
+          -Danypoint_password=${ANYPOINT_PASSWORD} \
+          -Ddblrepo_username=${DBLREPO_USERNAME} \
+          -Ddblrepo_password=${DBLREPO_PASSWORD} \
           -Dmaven.repo.local=./.m2/repository
         
     - name: Deploy to Main Environment
