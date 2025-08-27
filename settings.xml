@@ -42,13 +42,13 @@
    </servers>
    <mirrors/>
    <profiles>
-       <profile>
+<!--       <profile>
            <id>Mule</id>
            <activation>
                <activeByDefault>true</activeByDefault>
            </activation>
            <repositories>
-<!--               <repository>
+               <repository>
                    <id>MuleRepository</id>
                    <name>MuleRepository</name>
                    <url>https://repository.mulesoft.org/nexus-ee/content/repositories/releases-ee/</url>
@@ -59,7 +59,7 @@
                    <snapshots>
                        <enabled>true</enabled>
                    </snapshots>
-               </repository> -->
+               </repository> 
                <repository>
                    <id>datablindrepo</id>
                    <name>GitHub DataBlind Repository</name>
@@ -73,7 +73,7 @@
                    </snapshots>
                </repository>
            </repositories>
-       </profile> 
+       </profile> -->
        <profile>
            <id>mule-extra-repos</id>
            <activation>
