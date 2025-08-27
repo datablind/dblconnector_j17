@@ -44,6 +44,7 @@ jobs:
         DBLREPO_USERNAME: ${{ vars.DBLREPO_USERNAME }}
         DBLREPO_PASSWORD: ${{ vars.DBLREPO_PASSWORD }}
       run: |
+        echo "${SHELL}"
         echo "Checking secrets availability:"
         echo "ANYPOINT_USERNAME length: ${#ANYPOINT_USERNAME}"
         echo "DBLREPO_USERNAME length: ${#DBLREPO_USERNAME}"
