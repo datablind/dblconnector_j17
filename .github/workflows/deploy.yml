@@ -38,6 +38,11 @@ jobs:
         
     - name: Deploy to Dev Environment
       if: github.ref == 'refs/heads/dev' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'dev')
+      env:
+        ANYPOINT_USERNAME: ${{ secrets.ANYPOINT_USERNAME }}
+        ANYPOINT_PASSWORD: ${{ secrets.ANYPOINT_PASSWORD }}
+        DBLREPO_USERNAME: ${{ secrets.DBLREPO_USERNAME }}
+        DBLREPO_PASSWORD: ${{ secrets.DBLREPO_PASSWORD }}
       run: |
         echo "Checking secrets availability:"
         echo "ANYPOINT_USERNAME length: ${#ANYPOINT_USERNAME}"
