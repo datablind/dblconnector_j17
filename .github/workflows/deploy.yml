@@ -52,12 +52,16 @@ jobs:
         echo "ANYPOINT_USERNAME: '${{ secrets.ANYPOINT_USERNAME }}'"
         echo "DBLREPO_USERNAME: '${{ secrets.DBLREPO_USERNAME }}'"
         echo "*** means secrets are working and masked for security ***"
+        echo "Testing GitHub package registry access..."
+        echo "DBLREPO_USERNAME: $DBLREPO_USERNAME"
+        echo "DBLREPO_PASSWORD length: ${#DBLREPO_PASSWORD}"
         echo "Starting Maven deployment..."
         mvn clean package deploy -s ./settings.xml \
           -Danypoint_username=${{ secrets.ANYPOINT_USERNAME }} \
           -Danypoint_password=${{ secrets.ANYPOINT_PASSWORD }} \
           -Ddblrepo_username=${{ secrets.DBLREPO_USERNAME }} \
-          -Ddblrepo_password=${{ secrets.DBLREPO_PASSWORD }}
+          -Ddblrepo_password=${{ secrets.DBLREPO_PASSWORD }} \
+          -Dmaven.repo.local=./.m2/repository
         
     - name: Deploy to Main Environment
       if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'main')
@@ -72,5 +76,6 @@ jobs:
           -Danypoint_username=${{ secrets.ANYPOINT_USERNAME }} \
           -Danypoint_password=${{ secrets.ANYPOINT_PASSWORD }} \
           -Ddblrepo_username=${{ secrets.DBLREPO_USERNAME }} \
-          -Ddblrepo_password=${{ secrets.DBLREPO_PASSWORD }} 
+          -Ddblrepo_password=${{ secrets.DBLREPO_PASSWORD }} \
+          -Dmaven.repo.local=./.m2/repository 
 
