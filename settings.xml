@@ -59,7 +59,7 @@
                    <snapshots>
                        <enabled>true</enabled>
                    </snapshots>
-               </repository>
+               </repository> -->
                <repository>
                    <id>datablindrepo</id>
                    <name>GitHub DataBlind Repository</name>
