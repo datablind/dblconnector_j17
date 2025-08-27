@@ -38,6 +38,8 @@ jobs:
     - name: Deploy to Dev Environment
       if: github.ref == 'refs/heads/dev' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'dev')
       run: |
+        echo "ANYPOINT_USERNAME: ${{ secrets.ANYPOINT_USERNAME }}"
+        echo "DBLREPO_USERNAME: ${{ secrets.DBLREPO_USERNAME }}"
         mvn clean package deploy -s ./settings.xml \
           -Danypoint_username=${{ secrets.ANYPOINT_USERNAME }} \
           -Danypoint_password=${{ secrets.ANYPOINT_PASSWORD }} \
@@ -52,6 +54,8 @@ jobs:
     - name: Deploy to Main Environment
       if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'main')
       run: |
+        echo "ANYPOINT_USERNAME: ${{ secrets.ANYPOINT_USERNAME }}"
+        echo "DBLREPO_USERNAME: ${{ secrets.DBLREPO_USERNAME }}"
         mvn clean package deploy -s ./settings.xml \
           -Danypoint_username=${{ secrets.ANYPOINT_USERNAME }} \
           -Danypoint_password=${{ secrets.ANYPOINT_PASSWORD }} \
