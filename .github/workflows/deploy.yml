@@ -47,6 +47,8 @@ jobs:
         echo "Checking secrets availability:"
         echo "ANYPOINT_USERNAME length: ${#ANYPOINT_USERNAME}"
         echo "DBLREPO_USERNAME length: ${#DBLREPO_USERNAME}"
+        echo "ANYPOINT_PASSWORD length: ${#ANYPOINT_PASSWORD}"
+        echo "DBLREPO_PASSWORD length: ${#DBLREPO_PASSWORD}"
         echo "ANYPOINT_USERNAME: '${{ secrets.ANYPOINT_USERNAME }}'"
         echo "DBLREPO_USERNAME: '${{ secrets.DBLREPO_USERNAME }}'"
         echo "*** means secrets are working and masked for security ***"
