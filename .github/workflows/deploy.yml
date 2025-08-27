@@ -42,19 +42,19 @@ jobs:
         echo "Checking secrets availability:"
         echo "ANYPOINT_USERNAME length: ${#ANYPOINT_USERNAME}"
         echo "DBLREPO_USERNAME length: ${#DBLREPO_USERNAME}"
-        echo "ANYPOINT_USERNAME: '${{ vars.ANYPOINT_USERNAME }}'"
-        echo "DBLREPO_USERNAME: '${{ vars.DBLREPO_USERNAME }}'"
+        echo "ANYPOINT_USERNAME: '${{ secrets.ANYPOINT_USERNAME }}'"
+        echo "DBLREPO_USERNAME: '${{ secrets.DBLREPO_USERNAME }}'"
         echo "Starting Maven deployment..."
         mvn clean package deploy -s ./settings.xml \
-          -Danypoint_username=${{ vars.ANYPOINT_USERNAME }} \
-          -Danypoint_password=${{ vars.ANYPOINT_PASSWORD }} \
-          -Ddblrepo_username=${{ vars.DBLREPO_USERNAME }} \
-          -Ddblrepo_password=${{ vars.DBLREPO_PASSWORD }} 
+          -Danypoint_username=${{ secrets.ANYPOINT_USERNAME }} \
+          -Danypoint_password=${{ secrets.ANYPOINT_PASSWORD }} \
+          -Ddblrepo_username=${{ secrets.DBLREPO_USERNAME }} \
+          -Ddblrepo_password=${{ secrets.DBLREPO_PASSWORD }} 
       env:
-        anypoint_username: ${{ vars.ANYPOINT_USERNAME }}
-        anypoint_password: ${{ vars.ANYPOINT_PASSWORD }}
-        dblrepo_username: ${{ vars.DBLREPO_USERNAME }}
-        dblrepo_password: ${{ vars.DBLREPO_PASSWORD }}
+        anypoint_username: ${{ secrets.ANYPOINT_USERNAME }}
+        anypoint_password: ${{ secrets.ANYPOINT_PASSWORD }}
+        dblrepo_username: ${{ secrets.DBLREPO_USERNAME }}
+        dblrepo_password: ${{ secrets.DBLREPO_PASSWORD }}
         
     - name: Deploy to Main Environment
       if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'main')
@@ -62,16 +62,16 @@ jobs:
         echo "Checking secrets availability:"
         echo "ANYPOINT_USERNAME length: ${#ANYPOINT_USERNAME}"
         echo "DBLREPO_USERNAME length: ${#DBLREPO_USERNAME}"
-        echo "ANYPOINT_USERNAME: '${{ vars.ANYPOINT_USERNAME }}'"
-        echo "DBLREPO_USERNAME: '${{ vars.DBLREPO_USERNAME }}'"
+        echo "ANYPOINT_USERNAME: '${{ secrets.ANYPOINT_USERNAME }}'"
+        echo "DBLREPO_USERNAME: '${{ secrets.DBLREPO_USERNAME }}'"
         echo "Starting Maven deployment..."
         mvn clean package deploy -s ./settings.xml \
-          -Danypoint_username=${{ vars.ANYPOINT_USERNAME }} \
-          -Danypoint_password=${{ vars.ANYPOINT_PASSWORD }} \
-          -Ddblrepo_username=${{ vars.DBLREPO_USERNAME }} \
-          -Ddblrepo_password=${{ vars.DBLREPO_PASSWORD }} 
+          -Danypoint_username=${{ secrets.ANYPOINT_USERNAME }} \
+          -Danypoint_password=${{ secrets.ANYPOINT_PASSWORD }} \
+          -Ddblrepo_username=${{ secrets.DBLREPO_USERNAME }} \
+          -Ddblrepo_password=${{ secrets.DBLREPO_PASSWORD }} 
       env:
-        anypoint_username: ${{ vars.ANYPOINT_USERNAME }}
-        anypoint_password: ${{ vars.ANYPOINT_PASSWORD }}
-        dblrepo_username: ${{ vars.DBLREPO_USERNAME }}
-        dblrepo_password: ${{ vars.DBLREPO_PASSWORD }}
+        anypoint_username: ${{ secrets.ANYPOINT_USERNAME }}
+        anypoint_password: ${{ secrets.ANYPOINT_PASSWORD }}
+        dblrepo_username: ${{ secrets.DBLREPO_USERNAME }}
+        dblrepo_password: ${{ secrets.DBLREPO_PASSWORD }}
