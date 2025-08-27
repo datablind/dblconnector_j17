@@ -42,7 +42,7 @@
    </servers>
    <mirrors/>
    <profiles>
-<!--       <profile>
+       <profile>
            <id>Mule</id>
            <activation>
                <activeByDefault>true</activeByDefault>
@@ -60,8 +60,20 @@
                        <enabled>true</enabled>
                    </snapshots>
                </repository>
+               <repository>
+                   <id>datablindrepo</id>
+                   <name>GitHub DataBlind Repository</name>
+                   <url>https://maven.pkg.github.com/datablind/datacrypt</url>
+                   <layout>default</layout>
+                   <releases>
+                       <enabled>true</enabled>
+                   </releases>
+                   <snapshots>
+                       <enabled>true</enabled>
+                   </snapshots>
+               </repository>
            </repositories>
-       </profile> -->
+       </profile> 
        <profile>
            <id>mule-extra-repos</id>
            <activation>
