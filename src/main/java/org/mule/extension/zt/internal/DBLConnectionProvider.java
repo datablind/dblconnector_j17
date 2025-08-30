@@ -5,14 +5,24 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.api.connection.ConnectionValidationResult;
 import org.mule.runtime.api.connection.PoolingConnectionProvider;
+import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.meta.ExternalLibraryType;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.connection.CachedConnectionProvider;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.values.OfValues;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
+import org.mule.runtime.api.lifecycle.Startable;
+import org.mule.runtime.api.lifecycle.Stoppable;
+import javax.inject.Inject;
 
-
+import org.mule.runtime.http.api.HttpService;
+import org.mule.runtime.http.api.client.HttpClient;
+import org.mule.runtime.http.api.client.HttpClientConfiguration;
+import org.mule.runtime.http.api.domain.message.request.HttpRequest;
+import org.mule.runtime.http.api.domain.message.response.HttpResponse;
+import org.mule.runtime.http.api.domain.entity.ByteArrayHttpEntity;
+import org.mule.runtime.http.api.domain.message.request.HttpRequestBuilder;
 
 
 import org.slf4j.Logger;
@@ -30,13 +40,22 @@ import org.slf4j.LoggerFactory;
  * caches connections or simply {@link ConnectionProvider} if you want a new connection each time something requires one.
  */
 
-public class DBLConnectionProvider implements PoolingConnectionProvider<DBLConnection> {
+public class DBLConnectionProvider implements PoolingConnectionProvider<DBLConnection>, Startable, Stoppable {
+
+  @Inject
+  private HttpService httpService;
+
+  private volatile HttpClient httpClient;
 
   private final Logger LOGGER = LoggerFactory.getLogger(DBLConnectionProvider.class);
 
   @Override
   public DBLConnection connect() throws ConnectionException {
-    return new DBLConnection("Test");
+        // Create the HTTP client with a meaningful name for diagnostics
+        HttpClientConfiguration.Builder builder = new HttpClientConfiguration.Builder();
+        builder.setName("datablind-http-client");
+        httpClient = httpService.getClientFactory().create(builder.build());
+        return new DBLConnection("Test", httpClient);
   }
 
   @Override
@@ -51,5 +70,23 @@ public class DBLConnectionProvider implements PoolingConnectionProvider<DBLConne
   @Override
   public ConnectionValidationResult validate(DBLConnection connection) {
     return ConnectionValidationResult.success();
+  }
+
+  @Override
+  public void start() {
+    try {
+      httpClient.start();
+    } catch (Exception e) {
+      LOGGER.error("Error while starting httpClient: " + e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public void stop() {
+    try {
+      httpClient.stop();
+    } catch (Exception e) {
+      LOGGER.error("Error while stopping httpClient: " + e.getMessage(), e);
+    }
   }
 }
