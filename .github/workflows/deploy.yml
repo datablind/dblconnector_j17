@@ -51,7 +51,7 @@ jobs:
         echo "ANYPOINT_PASSWORD length: ${#ANYPOINT_PASSWORD}"
         echo "DBLREPO_PASSWORD length: ${#DBLREPO_PASSWORD}"
         echo "Starting Maven deployment...."
-        mvn clean package deploy -s ./settings.xml -DskipTests -Dmaven.javadoc.skip=true \
+        mvn clean package deploy -s ./settings.xml -DskipTests -Dmaven.javadoc.skip=true -Dmaven.deploy.skip=true \
           -Danypoint_username=$ANYPOINT_USERNAME \
           -Danypoint_password=$ANYPOINT_PASSWORD \
           -Ddblrepo_username=$DBLREPO_USERNAME \
