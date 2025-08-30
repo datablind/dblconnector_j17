@@ -51,12 +51,16 @@ jobs:
         echo "ANYPOINT_PASSWORD length: ${#ANYPOINT_PASSWORD}"
         echo "DBLREPO_PASSWORD length: ${#DBLREPO_PASSWORD}"
         echo "Starting Maven deployment...."
-        mvn clean package deploy -s ./settings.xml -DskipTests -Dmaven.javadoc.skip=true \
+        mvn clean package -s ./settings.xml -DskipTests -Dmaven.javadoc.skip=true \
           -Danypoint_username=$ANYPOINT_USERNAME \
           -Danypoint_password=$ANYPOINT_PASSWORD \
           -Ddblrepo_username=$DBLREPO_USERNAME \
           -Ddblrepo_password=$DBLREPO_PASSWORD 
-        
+        mvn org.mule.tools.maven:mule-maven-plugin:4.5.1:deploy -s ./settings.xml \
+          -Danypoint_username=$ANYPOINT_USERNAME \
+          -Danypoint_password=$ANYPOINT_PASSWORD \
+          -Ddblrepo_username=$DBLREPO_USERNAME \
+          -Ddblrepo_password=$DBLREPO_PASSWORD 
     - name: Deploy to Main Environment
       if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'main')
       env:
