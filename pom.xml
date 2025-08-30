@@ -19,7 +19,7 @@
 		  <plugin>
 			<groupId>org.mule.tools.maven</groupId>
 			<artifactId>mule-maven-plugin</artifactId>
-			<version>4.4.0</version>
+			<version>4.5.1</version>
 			<extensions>true</extensions>
 			<executions>
 			  <!-- run the Mule upload during verify (before the default deploy phase) -->
