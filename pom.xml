@@ -12,8 +12,39 @@
 		<groupId>org.mule.extensions</groupId>
 		<artifactId>mule-modules-parent</artifactId>
 		<version>1.9.0</version>
-
 	</parent>
+	
+	<build>
+		<plugins>
+		  <plugin>
+			<groupId>org.mule.tools.maven</groupId>
+			<artifactId>mule-maven-plugin</artifactId>
+			<version>4.5.0</version>
+			<extensions>true</extensions>
+			<executions>
+			  <!-- run the Mule upload during verify (before the default deploy phase) -->
+			  <execution>
+				<id>mule-exchange-deploy</id>
+				<phase>verify</phase>
+				<goals>
+				  <goal>deploy</goal>
+				</goals>
+			  </execution>
+			</executions>
+		  </plugin>
+	  
+		  <!-- prevent the plain-jar deploy that causes the 400 -->
+		  <plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-deploy-plugin</artifactId>
+			<version>3.1.2</version>
+			<configuration>
+			  <skip>true</skip>
+			</configuration>
+		  </plugin>
+		</plugins>
+	  </build>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.mule.sdk</groupId>
