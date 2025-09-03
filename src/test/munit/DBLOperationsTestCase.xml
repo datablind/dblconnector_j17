@@ -1,22 +1,27 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns:basic="http://www.mulesoft.org/schema/mule/basic"
+      xmlns:zt="http://www.mulesoft.org/schema/mule/zt"
       xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
       xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
       http://www.mulesoft.org/schema/mule/munit-tools http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
       http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
-          http://www.mulesoft.org/schema/mule/basic http://www.mulesoft.org/schema/mule/basic/current/mule-basic.xsd">
+      http://www.mulesoft.org/schema/mule/zt http://www.mulesoft.org/schema/mule/zt/current/mule-zt.xsd">
 
-    <basic:config name="basic-config" configId="configId" encryptionKey="1234567890123456">
-        <basic:connection name="basic-connection" apiUri="uri" apiKey="uriKey"/> />
-    </basic:config>
+    <zt:config name="zt-config" encryptionKey="1234567890123456">
+        <zt:connection name="zt-connection" apiUri="uri" apiKey="uriKey"/>
+    </zt:config>
 
-    <munit:config name="basic-operations-test"/>
+    <munit:config name="zt-operations-test"/>
 
     <munit:test name="encryptJsonTest">
         <munit:execution>
-            <basic:encryptJson sensitiveFields="{\"name\" : \"FE:PersonName\"}" sensitiveJson="{\"name\":\"John\",\"age\":30}" tweak="1234567890123456" overRideToken="NOTOKEN" passPhrase="NOPASSPHRASE"/>
+            <zt:encryptJson config-ref="zt-config" 
+                sensitiveFields="{\"name\" : \"FE:PersonName\"}" 
+                sensitiveJson="{\"name\":\"John\",\"age\":30}" 
+                tweak="1234567890123456" 
+                overRideToken="NOTOKEN" 
+                passPhrase="NOPASSPHRASE"/>
         </munit:execution>
         <munit:validation>
             <munit-tools:assert-equals actual="#[payload]" expected="#['Hello!']"/>
@@ -25,7 +30,12 @@
 
     <munit:test name="encryptJsonUsingNLPTest">
         <munit:execution>
-            <basic:encryptJsonUsingNLP connection-ref="basic-connection" configuration-ref="configId" sensitiveJson="{\"name\":\"John\",\"age\":30}" tweak="1234567890123456" overRideToken="NOTOKEN" passPhrase="NOPASSPHRASE"/>
+            <zt:encryptJsonUsingNLP config-ref="zt-config" 
+                connection-ref="zt-connection" 
+                sensitiveJson="{\"name\":\"John\",\"age\":30}" 
+                tweak="1234567890123456" 
+                overRideToken="NOTOKEN" 
+                passPhrase="NOPASSPHRASE"/>
         </munit:execution>
         <munit:validation>
             <munit-tools:assert-equals actual="#[payload]" expected="#['Using Configuration [configId] with Connection id [aValue:100]']"/>
